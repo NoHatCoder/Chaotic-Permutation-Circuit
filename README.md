@@ -32,4 +32,4 @@ Feel free to use the Github issue tracker for questions and comments.
 
 Changed shuffling pattern, mixing now happens faster and as a result the output is cleaner.
 
-Changed the third block XOR mask in order to break the symmetry-preserving nature of the new shuffling pattern.
+Changed the third block XOR constant in order to break the symmetry-preserving nature of the new shuffling pattern.
