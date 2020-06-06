@@ -4,7 +4,7 @@
 ## Key points
 * A single cryptographic instruction that is cheap and simple to integrate into modern processors.
 * Useful as the primary building block in any type of symmetric primitive.
-* Full mixing of 128 bits with only minor statistical traces.
+* Full mixing of 128 bits.
 * May be implemented as a single 1/2, 1/4 or 1/8 instruction that can be called multiple times to simulate the full instruction, reducing die space consumption at the cost of speed.
 * Operates on standard 128 bit registers. 1/8 instruction may be implemented using 32 bit registers (2 in 2 out).
 * Full instruction consists of approximately 4500 gates.
@@ -27,3 +27,9 @@ Any insight into the cryptographic properties of the instruction is of course mo
 Suggestions for improvements to the instruction are also welcome, but please bear in mind that the design must balance cryptographic performance with hardware cost, while maintaining decent software performance.
 
 Feel free to use the Github issue tracker for questions and comments.
+
+##Version R2 changes from R1
+
+Changed shuffling pattern, mixing now happens faster and as a result the output is cleaner.
+
+Changed the third block XOR mask in order to break the symmetry-preserving nature of the new shuffling pattern.
