@@ -28,7 +28,7 @@ Suggestions for improvements to the instruction are also welcome, but please bea
 
 Feel free to use the Github issue tracker for questions and comments.
 
-##Version R2 changes from R1
+## Version R2 changes from R1
 
 Changed shuffling pattern, mixing now happens faster and as a result the output is cleaner.
 
