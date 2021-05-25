@@ -6,6 +6,7 @@
 #include <x86intrin.h>
 #endif
 #define cpc_r __m128i
+#define cpc_64 unsigned long long
 #define cpc_xor(a,b) _mm_xor_si128((a),(b))
 #define cpc_or(a,b) _mm_or_si128((a),(b))
 #define cpc_shl(a,b) _mm_slli_epi64((a),(b))
@@ -46,7 +47,47 @@ cpc_r cpc(cpc_r a, cpc_r b) {
 	return cpc_xor(a, b);
 }
 
+cpc_r cpc_scalar(cpc_r a, cpc_r b) {
+	cpc_64 a0 = ((cpc_64*)&a)[0];
+	cpc_64 a1 = ((cpc_64*)&a)[1];
+	cpc_64 b0 = ((cpc_64*)&b)[0];
+	cpc_64 b1 = ((cpc_64*)&b)[1];
+	cpc_r pi = cpc_pi2;
+	cpc_64 pi0 = ((cpc_64*)&pi)[0];
+	cpc_64 pi1 = ((cpc_64*)&pi)[1];
+	int i;
+	for (i = 0; i < 4; i++) {
+		if (i == 2) {
+			a0 ^= pi0;
+		}
+		else {
+			a0 ^= pi1;
+		}
+		a1 ^= pi1;
+		cpc_64 ta0 = (a0 & 0x00000000ff00ff00LL) | ((a0 & 0x0000000000ff00ffLL) << 40) | (a1 & 0x00ff00ff00000000LL) | ((a1 & 0xff00ff0000000000LL) >> 40);
+		cpc_64 ta1 = (a1 & 0x00000000ff00ff00LL) | ((a1 & 0x0000000000ff00ffLL) << 40) | (a0 & 0x00ff00ff00000000LL) | ((a0 & 0xff00ff0000000000LL) >> 40);
+		a0 = ta0;
+		a1 = ta1;
+		a0 = (a0 ^ (a0 << 4)) ^ ((a0 << 1) | (a0 << 2));
+		a1 = (a1 ^ (a1 << 4)) ^ ((a1 << 1) | (a1 << 2));
+		a0 = (a0 ^ (a0 >> 10)) ^ ((a0 >> 1) | (a0 >> 2));
+		a1 = (a1 ^ (a1 >> 10)) ^ ((a1 >> 1) | (a1 >> 2));
+		a0 = (a0 ^ (a0 << 7)) ^ ((a0 << 1) | (a0 << 2));
+		a1 = (a1 ^ (a1 << 7)) ^ ((a1 << 1) | (a1 << 2));
+	}
+	a0 ^= b0;
+	a1 ^= b1;
+	((cpc_64*)&a)[0] = a0;
+	((cpc_64*)&a)[1] = a1;
+	return a;
+}
+/*
 cpc_r cpc_twice(cpc_r a, cpc_r b, cpc_r c) {
 	return cpc(cpc(a, b), c);
 }
+*/
+cpc_r cpc_twice(cpc_r a, cpc_r b, cpc_r c) {
+	return cpc_scalar(cpc_scalar(a, b), c);
+}
+
 #endif
